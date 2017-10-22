@@ -56,7 +56,6 @@ def userLogin(request):
             snippet = User.objects.get(username = data['username'])
         except User.DoesNotExist:
             return HttpResponse(status=404)
-        print(snippet)
         serializer = UserSerializer(snippet)
         return JsonResponse(serializer.data)
 
