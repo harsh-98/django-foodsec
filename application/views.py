@@ -30,7 +30,6 @@ def userCreate(request):
     List all code snippets, or create a new snippet.
     """
     print(request)
-
     if request.method == 'GET':
         snippets = User.objects.all()
         serializer = UserSerializer(snippets, many=True)
@@ -46,19 +45,20 @@ def userCreate(request):
 
 
 @csrf_exempt
-def userLogin(request, pk):
+def userLogin(request):
     print(request)
     """
     Retrieve, update or delete a code snippet.
     """
-    try:
-        snippet = User.objects.get(username = request.POST['username'],password = password.POST['password'])
-    except User.DoesNotExist:
-        return HttpResponse(status=404)
-    print(snippet)
-#    if request.method == 'GET':
-#        serializer = SnippetSerializer(snippet)
-#        return JsonResponse(serializer.data)#
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        try:
+            snippet = User.objects.get(username = data['username'])
+        except User.DoesNotExist:
+            return HttpResponse(status=404)
+        print(snippet)
+        serializer = UserSerializer(snippet)
+        return JsonResponse(serializer.data)
 
 #    elif request.method == 'PUT':
 #        data = JSONParser().parse(request)
