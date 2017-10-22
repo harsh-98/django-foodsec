@@ -24,12 +24,12 @@ from rest_framework import routers
 from application import views
 
 router = routers.DefaultRouter()
-router.register(r'signup', views.userCreate)
-router.register(r'login', views.userLogin)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     url(r'^', include(router.urls)),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'signup', views.userCreate),
+    url(r'login', views.userLogin)
 ]

@@ -29,6 +29,8 @@ def userCreate(request):
     """
     List all code snippets, or create a new snippet.
     """
+    print(request)
+
     if request.method == 'GET':
         snippets = User.objects.all()
         serializer = UserSerializer(snippets, many=True)
