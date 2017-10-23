@@ -14,8 +14,8 @@
 
 
 
-## search_near_cool_storage
-![search_near_cool_storage](readme_pics/search_near_cool_storage.png)
+## yield_of_different_products_is_now_passed_as_array
+![yield_of_different_products_is_now_passed_as_array](readme_pics/yield_of_different_products_is_now_passed_as_array.png)
 
 
 

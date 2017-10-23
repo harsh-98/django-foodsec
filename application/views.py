@@ -64,11 +64,30 @@ def storeCreate(request):
 
     elif request.method == 'POST':
         data = JSONParser().parse(request)
-        serializer = ColdStorageSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+        print(data['owner'])
+        arr = data['yield']
+        del data['yield']
+        var = 1
+        for i in arr:
+           tmp = dict()
+           tmp = dict()
+           tmp['yieldType'] = i[0]
+           tmp['space'] = i[1]
+           tmp['empty'] = i[2]
+           tmp1 = data.copy()
+           tmp1.update(tmp)
+           print(tmp1)
+
+           serializer = ColdStorageSerializer(data=tmp1)
+           if serializer.is_valid():
+              serializer.save()
+              var*=1
+           else:
+              var*=0
+        if var == 1:
+            return JsonResponse("created", status=201,safe=False)
+        else :
+            return JsonResponse(serializer.errors, status=400)
 
 
 @csrf_exempt
