@@ -1,34 +1,18 @@
 #from django.contrib.auth.models import User, Group
-from application.models import User
+from application.models import User, ColdStorage
 from rest_framework import viewsets
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
-from application.serializers import UserSerializer, GroupSerializer
-
-
-#class UserViewSet(viewsets.ModelViewSet):
-#        """
-#            API endpoint that allows users to be viewed or edited.
-#        """
-#        queryset = User.objects.all().order_by('-date_joined')
-#        serializer_class = UserSerializer#
-#
-
-#class GroupViewSet(viewsets.ModelViewSet):
-#        """
-#            API endpoint that allows groups to be viewed or edited.
-#        """
-#        queryset = Group.objects.all()
-#        serializer_class = GroupSerializer
+from application.serializers import UserSerializer, GroupSerializer, ColdStorageSerializer
+import math as Math
 
 
 @csrf_exempt
 def userCreate(request):
-    """
-    List all code snippets, or create a new snippet.
-    """
+
+
     print(request)
     if request.method == 'GET':
         snippets = User.objects.all()
@@ -46,14 +30,12 @@ def userCreate(request):
 
 @csrf_exempt
 def userLogin(request):
-    print(request)
-    """
-    Retrieve, update or delete a code snippet.
-    """
+
+
     if request.method == 'POST':
         data = JSONParser().parse(request)
         try:
-            snippet = User.objects.get(username = data['username'])
+            snippet = User.objects.get(email = data['email'],password = data['password'])
         except User.DoesNotExist:
             return HttpResponse(status=404)
         serializer = UserSerializer(snippet)
@@ -70,3 +52,52 @@ def userLogin(request):
 #    elif request.method == 'DELETE':
 #        snippet.delete()
 #        return HttpResponse(status=204)
+
+@csrf_exempt
+def storeCreate(request):
+
+
+    if request.method == 'GET':
+        snippets = ColdStorage.objects.all()
+        serializer = ColdStorageSerializer(snippets, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = ColdStorageSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
+
+
+@csrf_exempt
+def nearColdStorage(request):
+
+
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        lon = data['longitude']
+        lat = data['latitude']
+        R = 6378
+        radius = 50
+        x1 = lon - Math.degrees(float(radius)/R/Math.cos(Math.radians(lat)))
+        x2 = lon + Math.degrees(float(radius)/R/Math.cos(Math.radians(lat)))
+        y1 = lat - Math.degrees(float(radius)/R)
+        y2 = lat + Math.degrees(float(radius)/R)
+        print(x1)
+        print(x2)
+        print(y1)
+        print(y2)
+        try:
+            snippet = ColdStorage.objects.filter(longitude__gte = x1,
+                                                 longitude__lte = x2, 
+                                                 latitude__gte = y1, 
+                                                 latitude__lte = y2,
+                                                 empty__gte = data['quantity'],
+                                                 yieldType = data['yieldType'])
+            print(snippet)
+        except ColdStorage.DoesNotExist:
+            return HttpResponse(status=404)
+        serializer = ColdStorageSerializer(snippet, many=True)
+        return JsonResponse(serializer.data, safe=False)
