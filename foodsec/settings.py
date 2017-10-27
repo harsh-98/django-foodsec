@@ -25,7 +25,7 @@ SECRET_KEY = 'y115u041swcc0f#7qv=)41^es+spikpv2!$%x+kf8y4+18d7xa'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'food-security.herokuapp.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'food-security.herokuapp.com', 'harsh98.pythonanywhere.com']
 
 
 # Application definition
